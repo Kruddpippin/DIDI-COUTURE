@@ -1,0 +1,136 @@
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+  background-color: var(--swatch--hero-bg);
+  color: #fff;
+}
+
+.hero__slides {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 800ms cubic-bezier(0.32, 0.72, 0, 1);
+  pointer-events: none;
+}
+
+.hero__slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slide-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+.hero__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  z-index: 2;
+}
+
+.hero__cta-block {
+  max-width: 50rem;
+}
+
+.hero__cta {
+  display: inline-block;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  transition: opacity 0.2s ease;
+}
+
+.hero__cta:hover {
+  opacity: 0.85;
+}
+
+.hero__title {
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 30ch;
+}
+
+/* Pagination at bottom */
+.hero__pagination {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  color: #fff;
+}
+
+.hero__pagination-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.hero__pagination-item {
+  font-size: 1.5rem;
+  font-style: italic;
+  font-family: var(--font-serif);
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.hero__pagination-item.is-active {
+  color: #fff;
+}
+
+.hero__scroll {
+  font-size: 1.125rem;
+  font-style: italic;
+  font-family: var(--font-serif);
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .hero__content {
+    padding-bottom: 5rem;
+  }
+
+  .hero__cta,
+  .hero__title {
+    font-size: 1.5rem;
+  }
+
+  .hero__pagination-item {
+    font-size: 1.125rem;
+  }
+
+  .hero__scroll {
+    font-size: 0.875rem;
+  }
+}

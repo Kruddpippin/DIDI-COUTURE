@@ -1,0 +1,48 @@
+.about {
+  padding-block: clamp(5rem, 10vw, 10rem);
+  background-color: var(--swatch--light);
+}
+
+.about__inner {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+.about__icons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  color: var(--swatch--dark);
+}
+
+.about__icon--monogram {
+  width: clamp(2.5rem, 4vw, 3.5rem);
+  height: auto;
+}
+
+.about__icon--bird {
+  width: clamp(3.5rem, 5vw, 5rem);
+  height: auto;
+}
+
+.about__text p {
+  font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--swatch--dark);
+}
+
+@media (max-width: 768px) {
+  .about__inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .about__text p {
+    font-size: 1.375rem;
+  }
+}
