@@ -23,6 +23,13 @@ const slides = [
     title: 'Rooted in culture. Worn with pride.',
     href: 'https://www.instagram.com/',
   },
+  {
+    id: '04',
+    image: '/hero4.jpg',
+    cta: 'Shop Now',
+    title: 'Crafted for those who wear their identity.',
+    href: '/collections/all',
+  },
 ]
 
 function Hero() {
