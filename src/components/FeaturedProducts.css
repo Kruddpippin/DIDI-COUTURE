@@ -32,7 +32,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background-color: #121212;
+  background-color: #D8C8BD;
   aspect-ratio: 1;
   overflow: hidden;
   scroll-snap-align: start;
@@ -80,7 +80,7 @@
   left: 0;
   right: 0;
   padding: 1.25rem;
-  background-color: rgba(18, 18, 18, 0.95);
+  background-color: rgba(133, 103, 123, 0.93);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -196,6 +196,14 @@
 @media (max-width: 900px) {
   .featured__track {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .product-card__info {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
 }
 

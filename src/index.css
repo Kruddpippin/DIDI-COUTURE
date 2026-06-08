@@ -16,14 +16,14 @@
    CSS Variables (matching original site)
    =========================================== */
 :root {
-  --swatch--light: #FFFFFF;
-  --swatch--dark: #121212;
-  --swatch--dark-faded: #2C2C2C;
-  --swatch--light-faded: #8A8A8A;
-  --swatch--brand: #8B1A2E;
-  --swatch--hero-bg: #121212;
-  --swatch--off-white: #F5F5F5;
-  --swatch--cream: #ECECEC;
+  --swatch--light: #FAF6F2;
+  --swatch--dark: #1C1210;
+  --swatch--dark-faded: #3D2A24;
+  --swatch--light-faded: #A78C7B;
+  --swatch--brand: #A46765;
+  --swatch--hero-bg: #85677B;
+  --swatch--off-white: #D8C8BD;
+  --swatch--cream: #EDE5DC;
 
   --font-primary: 'PpNeueMontrealVariable', Arial, sans-serif;
   --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
