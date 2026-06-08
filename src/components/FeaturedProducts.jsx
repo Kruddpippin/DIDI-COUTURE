@@ -67,7 +67,7 @@ const products = [
   },
 ]
 
-function FeaturedProducts({ onAddToCart }) {
+function FeaturedProducts({ onAddToCart, onBuyNow }) {
   const [hoveredId, setHoveredId] = useState(null)
 
   return (
@@ -106,13 +106,22 @@ function FeaturedProducts({ onAddToCart }) {
               </div>
               <div className="product-card__bottom">
                 <span className="product-card__price">{product.price}</span>
-                <button
-                  className="product-card__add"
-                  onClick={() => onAddToCart(product)}
-                  aria-label={`Add ${product.title} to cart`}
-                >
-                  ADD TO CART
-                </button>
+                <div className="product-card__actions">
+                  <button
+                    className="product-card__btn product-card__btn--cart"
+                    onClick={(e) => { e.preventDefault(); onAddToCart(product) }}
+                    aria-label={`Add ${product.title} to cart`}
+                  >
+                    ADD TO CART
+                  </button>
+                  <button
+                    className="product-card__btn product-card__btn--buy"
+                    onClick={(e) => { e.preventDefault(); onBuyNow(product) }}
+                    aria-label={`Buy ${product.title} now`}
+                  >
+                    BUY NOW
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import './CartPage.css'
 
-function CartPage({ items, onClose, onRemove, onUpdateQty }) {
-  const [step, setStep] = useState('cart')
+function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty }) {
+  const [step, setStep] = useState(initialStep)
   const [paymentMethod, setPaymentMethod] = useState('card')
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '',

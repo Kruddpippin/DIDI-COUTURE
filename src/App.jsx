@@ -14,8 +14,9 @@ import CartPage from './components/CartPage'
 function App() {
   const [cartOpen, setCartOpen] = useState(false)
   const [cartItems, setCartItems] = useState([])
+  const [cartInitialStep, setCartInitialStep] = useState('cart')
 
-  const addToCart = (product) => {
+  const upsertItem = (product) => {
     setCartItems(prev => {
       const existing = prev.find(item => item.id === product.id)
       if (existing) {
@@ -25,6 +26,17 @@ function App() {
       }
       return [...prev, { ...product, qty: 1 }]
     })
+  }
+
+  const addToCart = (product) => {
+    upsertItem(product)
+    setCartInitialStep('cart')
+    setCartOpen(true)
+  }
+
+  const buyNow = (product) => {
+    upsertItem(product)
+    setCartInitialStep('checkout')
     setCartOpen(true)
   }
 
@@ -42,13 +54,13 @@ function App() {
   return (
     <div className="app">
       <Header
-        onCartOpen={() => setCartOpen(true)}
+        onCartOpen={() => { setCartInitialStep('cart'); setCartOpen(true) }}
         cartCount={cartCount}
       />
       <main>
         <Hero />
         <About />
-        <FeaturedProducts onAddToCart={addToCart} />
+        <FeaturedProducts onAddToCart={addToCart} onBuyNow={buyNow} />
         <ThreeSections />
         <MadeLocally />
         <Gallery />
@@ -59,6 +71,7 @@ function App() {
       {cartOpen && (
         <CartPage
           items={cartItems}
+          initialStep={cartInitialStep}
           onClose={() => setCartOpen(false)}
           onRemove={removeFromCart}
           onUpdateQty={updateQty}
