@@ -1,5 +1,5 @@
 .site-footer {
-  background-color: #f4f0ea;
+  background-color: var(--swatch--off-white);
   padding-block: clamp(3rem, 5vw, 5rem);
   color: var(--swatch--dark);
 }
