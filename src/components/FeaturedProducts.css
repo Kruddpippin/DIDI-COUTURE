@@ -32,7 +32,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background-color: #2E3D28;
+  background-color: #121212;
   aspect-ratio: 1;
   overflow: hidden;
   scroll-snap-align: start;
@@ -80,7 +80,7 @@
   left: 0;
   right: 0;
   padding: 1.25rem;
-  background-color: rgba(18, 28, 18, 0.94);
+  background-color: rgba(18, 18, 18, 0.95);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.3s ease, transform 0.3s ease;

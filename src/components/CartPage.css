@@ -415,7 +415,7 @@
 }
 
 .card-preview {
-  background: linear-gradient(135deg, #1A2E1A 0%, #C4902E 100%);
+  background: linear-gradient(135deg, #1A1A1A 0%, #8B1A2E 100%);
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;
