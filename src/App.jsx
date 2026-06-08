@@ -30,8 +30,6 @@ function App() {
 
   const addToCart = (product) => {
     upsertItem(product)
-    setCartInitialStep('cart')
-    setCartOpen(true)
   }
 
   const buyNow = (product) => {
