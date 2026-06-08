@@ -1,0 +1,277 @@
+import { useState } from 'react'
+import './CartPage.css'
+
+function CartPage({ items, onClose, onRemove, onUpdateQty }) {
+  const [step, setStep] = useState('cart')
+  const [paymentMethod, setPaymentMethod] = useState('card')
+  const [form, setForm] = useState({
+    firstName: '', lastName: '', email: '', phone: '',
+    address: '', city: '', state: '',
+    cardNumber: '', cardName: '', expiry: '', cvv: '',
+  })
+
+  const parsePrice = (str) => parseFloat(str.replace(/[^0-9.]/g, '').replace(',', '')) || 0
+
+  const subtotal = items.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0)
+  const shipping = subtotal > 0 ? 5000 : 0
+  const total = subtotal + shipping
+
+  const fmt = (n) => `₦ ${n.toLocaleString('en-NG', { minimumFractionDigits: 2 })}`
+
+  const handleInput = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+
+  const formatCardNumber = (e) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 16)
+    const spaced = val.replace(/(.{4})/g, '$1 ').trim()
+    setForm(prev => ({ ...prev, cardNumber: spaced }))
+  }
+
+  const formatExpiry = (e) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 4)
+    const formatted = val.length > 2 ? val.slice(0, 2) + ' / ' + val.slice(2) : val
+    setForm(prev => ({ ...prev, expiry: formatted }))
+  }
+
+  return (
+    <div className="cart-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="cart-page">
+
+        <div className="cart-page__header">
+          <div className="cart-page__header-left">
+            {step === 'checkout' && (
+              <button className="cart-back" onClick={() => setStep('cart')}>← BACK</button>
+            )}
+            <h2 className="cart-page__title">
+              {step === 'cart' ? 'YOUR CART' : 'CHECKOUT'}
+              {items.length > 0 && <span className="cart-page__count">({items.length})</span>}
+            </h2>
+          </div>
+          <button className="cart-page__close" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+
+        <div className="cart-page__body">
+
+          {/* ── LEFT COLUMN ── */}
+          <div className="cart-page__left">
+
+            {items.length === 0 ? (
+              <div className="cart-empty">
+                <p className="cart-empty__msg">Your cart is empty.</p>
+                <button className="cart-empty__cta" onClick={onClose}>CONTINUE SHOPPING</button>
+              </div>
+            ) : (
+              <div className="cart-items">
+                {items.map(item => (
+                  <div key={item.id} className="cart-item">
+                    <img src={item.image} alt={item.title} className="cart-item__img" />
+                    <div className="cart-item__info">
+                      <h3 className="cart-item__title">{item.title}</h3>
+                      <p className="cart-item__code">{item.code}</p>
+                      <p className="cart-item__price">{item.price}</p>
+                      <div className="cart-item__qty">
+                        <button onClick={() => onUpdateQty(item.id, item.qty - 1)}>−</button>
+                        <span>{item.qty}</span>
+                        <button onClick={() => onUpdateQty(item.id, item.qty + 1)}>+</button>
+                      </div>
+                    </div>
+                    <button className="cart-item__remove" onClick={() => onRemove(item.id)} aria-label="Remove">✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {step === 'checkout' && items.length > 0 && (
+              <div className="checkout-form">
+                <h3 className="checkout-section__title">DELIVERY INFORMATION</h3>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>First Name</label>
+                    <input name="firstName" placeholder="First name" value={form.firstName} onChange={handleInput} />
+                  </div>
+                  <div className="form-group">
+                    <label>Last Name</label>
+                    <input name="lastName" placeholder="Last name" value={form.lastName} onChange={handleInput} />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input name="email" type="email" placeholder="your@email.com" value={form.email} onChange={handleInput} />
+                  </div>
+                  <div className="form-group">
+                    <label>Phone</label>
+                    <input name="phone" placeholder="+234 000 000 0000" value={form.phone} onChange={handleInput} />
+                  </div>
+                </div>
+                <div className="form-group form-full">
+                  <label>Delivery Address</label>
+                  <input name="address" placeholder="Street address" value={form.address} onChange={handleInput} />
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>City</label>
+                    <input name="city" placeholder="City" value={form.city} onChange={handleInput} />
+                  </div>
+                  <div className="form-group">
+                    <label>State</label>
+                    <input name="state" placeholder="State" value={form.state} onChange={handleInput} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {step === 'cart' && items.length > 0 && (
+              <button className="proceed-btn" onClick={() => setStep('checkout')}>
+                PROCEED TO CHECKOUT <span>→</span>
+              </button>
+            )}
+          </div>
+
+          {/* ── RIGHT COLUMN ── */}
+          <div className="cart-page__right">
+            <div className="order-summary">
+              <h3 className="order-summary__title">ORDER SUMMARY</h3>
+              <div className="order-summary__items">
+                {items.map(item => (
+                  <div key={item.id} className="order-summary__row">
+                    <span className="order-summary__name">{item.title} <em>×{item.qty}</em></span>
+                    <span className="order-summary__price">{item.price}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="order-summary__divider" />
+              <div className="order-summary__row">
+                <span>Subtotal</span>
+                <span>{fmt(subtotal)}</span>
+              </div>
+              <div className="order-summary__row">
+                <span>Shipping</span>
+                <span>{subtotal > 0 ? fmt(shipping) : '—'}</span>
+              </div>
+              <div className="order-summary__row order-summary__total">
+                <span>TOTAL</span>
+                <span>{fmt(total)}</span>
+              </div>
+            </div>
+
+            {step === 'checkout' && items.length > 0 && (
+              <div className="payment-section">
+                <h3 className="payment-section__title">PAYMENT METHOD</h3>
+
+                <div className="payment-tabs">
+                  {[
+                    { id: 'card', label: 'CARD' },
+                    { id: 'paystack', label: 'PAYSTACK' },
+                    { id: 'transfer', label: 'BANK TRANSFER' },
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      className={`payment-tab ${paymentMethod === tab.id ? 'is-active' : ''}`}
+                      onClick={() => setPaymentMethod(tab.id)}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {paymentMethod === 'card' && (
+                  <div className="payment-card">
+                    <div className="card-preview">
+                      <span className="card-preview__number">
+                        {form.cardNumber || '•••• •••• •••• ••••'}
+                      </span>
+                      <div className="card-preview__bottom">
+                        <span>{form.cardName || 'CARDHOLDER NAME'}</span>
+                        <span>{form.expiry || 'MM / YY'}</span>
+                      </div>
+                    </div>
+                    <div className="form-group form-full">
+                      <label>Card Number</label>
+                      <input
+                        name="cardNumber"
+                        placeholder="0000 0000 0000 0000"
+                        value={form.cardNumber}
+                        onChange={formatCardNumber}
+                        maxLength={19}
+                      />
+                    </div>
+                    <div className="form-group form-full">
+                      <label>Name on Card</label>
+                      <input name="cardName" placeholder="As it appears on card" value={form.cardName} onChange={handleInput} />
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Expiry</label>
+                        <input name="expiry" placeholder="MM / YY" value={form.expiry} onChange={formatExpiry} maxLength={7} />
+                      </div>
+                      <div className="form-group">
+                        <label>CVV</label>
+                        <input name="cvv" placeholder="•••" maxLength={4} value={form.cvv} onChange={handleInput} type="password" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {paymentMethod === 'paystack' && (
+                  <div className="payment-paystack">
+                    <div className="paystack-badge">
+                      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" rx="8" fill="#00C3F7"/>
+                        <path d="M10 15h20M10 20h20M10 25h15" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+                      </svg>
+                      <span>PAYSTACK</span>
+                    </div>
+                    <p className="paystack-desc">
+                      You will be securely redirected to Paystack to complete your payment. Supports all Nigerian banks, cards, and USSD.
+                    </p>
+                    <ul className="paystack-methods">
+                      <li>✓ Debit / Credit Card</li>
+                      <li>✓ Bank Transfer</li>
+                      <li>✓ USSD</li>
+                      <li>✓ Mobile Money</li>
+                    </ul>
+                  </div>
+                )}
+
+                {paymentMethod === 'transfer' && (
+                  <div className="payment-transfer">
+                    <p className="transfer-note">
+                      Transfer the exact total to the account below, then send proof of payment to{' '}
+                      <a href="mailto:hello@didi-couture.com">hello@didi-couture.com</a>
+                    </p>
+                    <div className="transfer-details">
+                      <div className="transfer-row">
+                        <span>Bank</span>
+                        <strong>First Bank of Nigeria</strong>
+                      </div>
+                      <div className="transfer-row">
+                        <span>Account Name</span>
+                        <strong>DIDI COUTURE LTD</strong>
+                      </div>
+                      <div className="transfer-row">
+                        <span>Account Number</span>
+                        <strong>0123456789</strong>
+                      </div>
+                      <div className="transfer-row">
+                        <span>Amount</span>
+                        <strong className="transfer-amount">{fmt(total)}</strong>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <button className="place-order-btn">
+                  {paymentMethod === 'paystack' ? 'PAY WITH PAYSTACK' : 'PLACE ORDER'}
+                  <span className="place-order-btn__arrow">→</span>
+                </button>
+                <p className="secure-note">🔒 Secured &amp; encrypted checkout</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default CartPage

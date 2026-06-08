@@ -1,6 +1,6 @@
 import './Header.css'
 
-function Header() {
+function Header({ onCartOpen, cartCount }) {
   return (
     <header className="site-header">
       <div className="site-header__logo">
@@ -14,8 +14,10 @@ function Header() {
       </button>
 
       <nav className="site-header__nav">
-        <a href="/collections/all" className="nav-link">SHOP NOW</a>
-        <a href="#cart" className="nav-link">CART</a>
+        <a href="#collections" className="nav-link">SHOP NOW</a>
+        <button className="nav-link cart-btn" onClick={onCartOpen} aria-label="Open cart">
+          CART{cartCount > 0 && <span className="cart-btn__count">{cartCount}</span>}
+        </button>
       </nav>
     </header>
   )

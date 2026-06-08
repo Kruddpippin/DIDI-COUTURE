@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import './FeaturedProducts.css'
 
 const products = [
@@ -67,9 +67,8 @@ const products = [
   },
 ]
 
-function FeaturedProducts() {
+function FeaturedProducts({ onAddToCart }) {
   const [hoveredId, setHoveredId] = useState(null)
-  const trackRef = useRef(null)
 
   return (
     <section id="collections" className="featured section">
@@ -77,16 +76,15 @@ function FeaturedProducts() {
         <span>( FEATURED COLLECTION )</span>
       </div>
 
-      <div className="featured__track" ref={trackRef}>
+      <div className="featured__track">
         {products.map((product) => (
-          <a
+          <div
             key={product.id}
-            href={product.href}
             className="product-card"
             onMouseEnter={() => setHoveredId(product.id)}
             onMouseLeave={() => setHoveredId(null)}
           >
-            <div className="product-card__image-wrap">
+            <a href={product.href} className="product-card__image-wrap">
               <img
                 src={product.image}
                 alt={product.title}
@@ -100,7 +98,7 @@ function FeaturedProducts() {
                 loading="lazy"
                 aria-hidden="true"
               />
-            </div>
+            </a>
             <div className={`product-card__info ${hoveredId === product.id ? 'is-visible' : ''}`}>
               <div className="product-card__top">
                 <h3 className="product-card__title">{product.title}</h3>
@@ -108,10 +106,16 @@ function FeaturedProducts() {
               </div>
               <div className="product-card__bottom">
                 <span className="product-card__price">{product.price}</span>
-                <span className="product-card__arrow" aria-hidden="true">→</span>
+                <button
+                  className="product-card__add"
+                  onClick={() => onAddToCart(product)}
+                  aria-label={`Add ${product.title} to cart`}
+                >
+                  ADD TO CART
+                </button>
               </div>
             </div>
-          </a>
+          </div>
         ))}
       </div>
 

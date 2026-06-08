@@ -85,6 +85,27 @@
   opacity: 0.7;
 }
 
+.cart-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cart-btn__count {
+  background: var(--swatch--brand);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
   .site-header {
     padding: 1rem;
