@@ -2,9 +2,9 @@ import './Community.css'
 
 const partners = [
   {
-    name: 'Fairways to africa',
-    description: 'Bespoke golf travel. Like our clients, we are golfers. We are young-at-heart and seek unique experiences whilst playing the sport we love around the world. We believe in quality above all else, and that is what we aim to deliver.',
-    href: 'https://fairwaystoafrica.com/',
+    name: 'DIDI COUTURE Collective',
+    description: 'A creative collective rooted in African fashion, art, and culture. We bring together designers, stylists, and storytellers who believe that clothing is more than fabric — it is identity, heritage, and expression made visible.',
+    href: '/',
   },
   {
     name: 'StartWell Foundation',
