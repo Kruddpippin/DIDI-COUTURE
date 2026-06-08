@@ -7,7 +7,7 @@ const slides = [
     image: '/hero1.jpg',
     cta: 'Shop Now',
     title: 'Explore our First Collection',
-    href: '/collections/all',
+    href: '#collections',
   },
   {
     id: '02',
@@ -28,7 +28,7 @@ const slides = [
     image: '/hero4.jpg',
     cta: 'Shop Now',
     title: 'Crafted for those who wear their identity.',
-    href: '/collections/all',
+    href: '#collections',
   },
 ]
 

@@ -72,7 +72,7 @@ function FeaturedProducts() {
   const trackRef = useRef(null)
 
   return (
-    <section className="featured section">
+    <section id="collections" className="featured section">
       <div className="featured__label">
         <span>( FEATURED COLLECTION )</span>
       </div>
