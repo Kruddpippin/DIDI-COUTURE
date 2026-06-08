@@ -7,18 +7,18 @@ const partners = [
     href: '/',
   },
   {
-    name: 'StartWell Foundation',
-    description: "At StartWell, we're a passionate team making a measurable difference in the fight against a specific kind of malnutrition which is the leading cause of child stunting. We don't just talk about the problem – we take action by designing, producing, and delivering nutrient-rich, ready-to-eat meals directly to vulnerable communities.",
+    name: 'Partner 1',
+    description: "Partner 1 is a passionate team making a measurable difference in the fight against a specific kind of malnutrition which is the leading cause of child stunting. We don't just talk about the problem – we take action by designing, producing, and delivering nutrient-rich, ready-to-eat meals directly to vulnerable communities.",
     href: 'https://startwellfoundation.org/',
   },
   {
-    name: '242',
+    name: 'Partner 2',
     description: "The world moves fast, but we believe there's something powerful about slowing down. A moment to take in. To connect. To be present. It's a reminder of what happens when people gather around something simple, yet made with care: coffee & connections.",
     href: 'https://www.instagram.com/twofortytwo.co/',
   },
   {
-    name: 'running late club',
-    description: 'The Running Late Club is a community where Everyday Athletes can find a place to belong. We cater to all paces and levels of fitness, and strive to provide the accountability and inspiration needed to reach your goals.',
+    name: 'Partner 3',
+    description: 'Partner 3 is a community where Everyday fashion lovers can find a place to belong. We cater to all tastes and standards of brilliance, and strive to provide the accountability and inspiration needed to reach your goals.',
     href: 'https://www.runninglateclub.com/',
   },
 ]
