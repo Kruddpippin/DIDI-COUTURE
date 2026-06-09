@@ -7,14 +7,17 @@ import ThreeSections from './components/ThreeSections'
 import MadeLocally from './components/MadeLocally'
 import Gallery from './components/Gallery'
 import MoreThanFabric from './components/MoreThanFabric'
+import BookingBanner from './components/BookingBanner'
 import Community from './components/Community'
 import Footer from './components/Footer'
 import CartPage from './components/CartPage'
+import BookingModal from './components/BookingModal'
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false)
   const [cartItems, setCartItems] = useState([])
   const [cartInitialStep, setCartInitialStep] = useState('cart')
+  const [bookingOpen, setBookingOpen] = useState(false)
 
   const upsertItem = (product) => {
     setCartItems(prev => {
@@ -54,6 +57,7 @@ function App() {
       <Header
         onCartOpen={() => { setCartInitialStep('cart'); setCartOpen(true) }}
         cartCount={cartCount}
+        onBookingOpen={() => setBookingOpen(true)}
       />
       <main>
         <Hero />
@@ -63,6 +67,7 @@ function App() {
         <MadeLocally />
         <Gallery />
         <MoreThanFabric />
+        <BookingBanner onBooking={() => setBookingOpen(true)} />
         <Community />
       </main>
       <Footer />
@@ -74,6 +79,9 @@ function App() {
           onRemove={removeFromCart}
           onUpdateQty={updateQty}
         />
+      )}
+      {bookingOpen && (
+        <BookingModal onClose={() => setBookingOpen(false)} />
       )}
     </div>
   )
