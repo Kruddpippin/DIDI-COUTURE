@@ -310,6 +310,16 @@ export default function BookingModal({ onClose }) {
             </button>
           )}
           <div className="booking-modal__footer-right">
+            {step === 1 && (
+              <button
+                type="button"
+                className="booking-nav-btn booking-nav-btn--skip"
+                disabled={!service}
+                onClick={() => setStep(3)}
+              >
+                Skip & Confirm Appointment
+              </button>
+            )}
             {step < 3 && (
               <button
                 type="button"

@@ -482,6 +482,9 @@
 
 .booking-modal__footer-right {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .booking-nav-btn {
@@ -499,6 +502,14 @@
   border: 1px solid #2a2a2a;
 }
 .booking-nav-btn--back:hover { color: #fff; border-color: #555; }
+
+.booking-nav-btn--skip {
+  background: transparent;
+  color: #888;
+  border: 1px solid #333;
+}
+.booking-nav-btn--skip:hover:not(:disabled) { border-color: #666; color: #ccc; }
+.booking-nav-btn--skip:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .booking-nav-btn--next {
   background: #fff;
