@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -15,9 +15,20 @@ import BookingModal from './components/BookingModal'
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false)
-  const [cartItems, setCartItems] = useState([])
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('didi-cart')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
   const [cartInitialStep, setCartInitialStep] = useState('cart')
   const [bookingOpen, setBookingOpen] = useState(false)
+
+  useEffect(() => {
+    localStorage.setItem('didi-cart', JSON.stringify(cartItems))
+  }, [cartItems])
 
   const upsertItem = (product) => {
     setCartItems(prev => {
