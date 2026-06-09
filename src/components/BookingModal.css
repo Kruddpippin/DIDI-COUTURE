@@ -601,6 +601,13 @@
 }
 .booking-action-btn:hover { opacity: 0.85; }
 
+.booking-submit-error {
+  font-size: 0.7rem;
+  color: #e07070;
+  letter-spacing: 0.03em;
+  align-self: center;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .booking-modal {

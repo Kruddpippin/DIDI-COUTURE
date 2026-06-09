@@ -1,9 +1,14 @@
 import { useState } from 'react'
+import { supabase } from '../lib/supabase'
 import './CartPage.css'
 
 function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty }) {
   const [step, setStep] = useState(initialStep)
+  const [fulfillment, setFulfillment] = useState('delivery')
   const [paymentMethod, setPaymentMethod] = useState('card')
+  const [placing, setPlacing] = useState(false)
+  const [orderPlaced, setOrderPlaced] = useState(false)
+  const [orderError, setOrderError] = useState(null)
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     address: '', city: '', state: '',
@@ -13,7 +18,7 @@ function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty 
   const parsePrice = (str) => parseFloat(str.replace(/[^0-9.]/g, '').replace(',', '')) || 0
 
   const subtotal = items.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0)
-  const shipping = subtotal > 0 ? 5000 : 0
+  const shipping = subtotal > 0 && fulfillment === 'delivery' ? 5000 : 0
   const total = subtotal + shipping
 
   const fmt = (n) => `₦ ${n.toLocaleString('en-NG', { minimumFractionDigits: 2 })}`
@@ -30,6 +35,51 @@ function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty 
     const val = e.target.value.replace(/\D/g, '').slice(0, 4)
     const formatted = val.length > 2 ? val.slice(0, 2) + ' / ' + val.slice(2) : val
     setForm(prev => ({ ...prev, expiry: formatted }))
+  }
+
+  const handlePlaceOrder = async () => {
+    if (placing) return
+    setPlacing(true)
+    setOrderError(null)
+
+    const { data: order, error: orderErr } = await supabase
+      .from('orders')
+      .insert({
+        customer_name: `${form.firstName} ${form.lastName}`.trim(),
+        customer_email: form.email,
+        customer_phone: form.phone,
+        fulfillment,
+        address: fulfillment === 'delivery' ? form.address : null,
+        city: fulfillment === 'delivery' ? form.city : null,
+        state: fulfillment === 'delivery' ? form.state : null,
+        payment_method: paymentMethod,
+        subtotal,
+        shipping,
+        total,
+      })
+      .select('id')
+      .single()
+
+    if (orderErr) {
+      setOrderError('Could not place order. Please try again.')
+      setPlacing(false)
+      return
+    }
+
+    const lineItems = items.map(item => ({
+      order_id: order.id,
+      product_id: item.id,
+      product_title: item.title,
+      product_code: item.code || null,
+      price: parsePrice(item.price),
+      quantity: item.qty,
+    }))
+
+    const { error: itemsErr } = await supabase.from('order_items').insert(lineItems)
+    if (itemsErr) console.error('Order items error:', itemsErr)
+
+    setPlacing(false)
+    setOrderPlaced(true)
   }
 
   return (
@@ -82,7 +132,32 @@ function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty 
 
             {step === 'checkout' && items.length > 0 && (
               <div className="checkout-form">
-                <h3 className="checkout-section__title">DELIVERY INFORMATION</h3>
+
+                {/* ── Fulfillment Toggle ── */}
+                <h3 className="checkout-section__title">FULFILMENT METHOD</h3>
+                <div className="fulfillment-toggle">
+                  <button
+                    className={`fulfillment-option ${fulfillment === 'delivery' ? 'is-active' : ''}`}
+                    onClick={() => setFulfillment('delivery')}
+                    type="button"
+                  >
+                    <span className="fulfillment-option__icon">🚚</span>
+                    <span className="fulfillment-option__label">Delivery</span>
+                    <span className="fulfillment-option__sub">Ship to your address</span>
+                  </button>
+                  <button
+                    className={`fulfillment-option ${fulfillment === 'pickup' ? 'is-active' : ''}`}
+                    onClick={() => setFulfillment('pickup')}
+                    type="button"
+                  >
+                    <span className="fulfillment-option__icon">🏪</span>
+                    <span className="fulfillment-option__label">Pick Up In-Store</span>
+                    <span className="fulfillment-option__sub">Free · Ready in 24 hrs</span>
+                  </button>
+                </div>
+
+                {/* ── Contact (shared) ── */}
+                <h3 className="checkout-section__title">CONTACT DETAILS</h3>
                 <div className="form-row">
                   <div className="form-group">
                     <label>First Name</label>
@@ -103,20 +178,53 @@ function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty 
                     <input name="phone" placeholder="+234 000 000 0000" value={form.phone} onChange={handleInput} />
                   </div>
                 </div>
-                <div className="form-group form-full">
-                  <label>Delivery Address</label>
-                  <input name="address" placeholder="Street address" value={form.address} onChange={handleInput} />
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>City</label>
-                    <input name="city" placeholder="City" value={form.city} onChange={handleInput} />
+
+                {/* ── Delivery address ── */}
+                {fulfillment === 'delivery' && (
+                  <>
+                    <h3 className="checkout-section__title">DELIVERY ADDRESS</h3>
+                    <div className="form-group form-full">
+                      <label>Street Address</label>
+                      <input name="address" placeholder="Street address" value={form.address} onChange={handleInput} />
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>City</label>
+                        <input name="city" placeholder="City" value={form.city} onChange={handleInput} />
+                      </div>
+                      <div className="form-group">
+                        <label>State</label>
+                        <input name="state" placeholder="State" value={form.state} onChange={handleInput} />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* ── Pickup info ── */}
+                {fulfillment === 'pickup' && (
+                  <div className="pickup-info">
+                    <div className="pickup-info__row">
+                      <span className="pickup-info__label">Store</span>
+                      <strong>DIDI COUTURE Atelier</strong>
+                    </div>
+                    <div className="pickup-info__row">
+                      <span className="pickup-info__label">Address</span>
+                      <strong>12 Adeola Odeku St, Victoria Island, Lagos</strong>
+                    </div>
+                    <div className="pickup-info__row">
+                      <span className="pickup-info__label">Hours</span>
+                      <strong>Mon – Sat · 9 AM – 6 PM</strong>
+                    </div>
+                    <div className="pickup-info__row">
+                      <span className="pickup-info__label">Ready in</span>
+                      <strong>Within 24 hours of order</strong>
+                    </div>
+                    <p className="pickup-info__note">
+                      You'll receive a confirmation email and SMS when your order is ready for collection. Please bring a valid ID.
+                    </p>
                   </div>
-                  <div className="form-group">
-                    <label>State</label>
-                    <input name="state" placeholder="State" value={form.state} onChange={handleInput} />
-                  </div>
-                </div>
+                )}
+
               </div>
             )}
 
@@ -145,8 +253,10 @@ function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty 
                 <span>{fmt(subtotal)}</span>
               </div>
               <div className="order-summary__row">
-                <span>Shipping</span>
-                <span>{subtotal > 0 ? fmt(shipping) : '—'}</span>
+                <span>{fulfillment === 'pickup' ? 'Fulfilment' : 'Shipping'}</span>
+                <span>
+                  {subtotal === 0 ? '—' : fulfillment === 'pickup' ? 'Free (In-Store)' : fmt(shipping)}
+                </span>
               </div>
               <div className="order-summary__row order-summary__total">
                 <span>TOTAL</span>
@@ -260,10 +370,25 @@ function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty 
                   </div>
                 )}
 
-                <button className="place-order-btn">
-                  {paymentMethod === 'paystack' ? 'PAY WITH PAYSTACK' : 'PLACE ORDER'}
-                  <span className="place-order-btn__arrow">→</span>
-                </button>
+                {orderError && <p className="order-error">{orderError}</p>}
+                {orderPlaced ? (
+                  <div className="order-success">
+                    <p className="order-success__title">Order Placed ✓</p>
+                    <p className="order-success__msg">
+                      Thank you! A confirmation will be sent to <strong>{form.email}</strong>.
+                    </p>
+                    <button className="cart-empty__cta" onClick={onClose}>CLOSE</button>
+                  </div>
+                ) : (
+                  <button
+                    className="place-order-btn"
+                    onClick={handlePlaceOrder}
+                    disabled={placing}
+                  >
+                    {placing ? 'PLACING ORDER…' : paymentMethod === 'paystack' ? 'PAY WITH PAYSTACK' : 'PLACE ORDER'}
+                    {!placing && <span className="place-order-btn__arrow">→</span>}
+                  </button>
+                )}
                 <p className="secure-note">🔒 Secured &amp; encrypted checkout</p>
               </div>
             )}

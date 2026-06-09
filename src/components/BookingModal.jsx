@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { supabase } from '../lib/supabase'
 import './BookingModal.css'
 
 const SERVICES = [
@@ -65,6 +66,8 @@ export default function BookingModal({ onClose }) {
   const [time, setTime] = useState('')
   const [contact, setContact] = useState({ name: '', email: '', phone: '' })
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(null)
 
   const setMeasurement = (key, val) => setMeasurements(prev => ({ ...prev, [key]: val }))
   const setContactField = (key, val) => setContact(prev => ({ ...prev, [key]: val }))
@@ -73,9 +76,30 @@ export default function BookingModal({ onClose }) {
   const selectedService = SERVICES.find(s => s.id === service)
   const canSubmit = contact.name && contact.email && contact.phone && date && time
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    if (!canSubmit) return
+    if (!canSubmit || submitting) return
+    setSubmitting(true)
+    setSubmitError(null)
+
+    const hasMeasurements = Object.values(measurements).some(v => v !== '')
+    const { error } = await supabase.from('bookings').insert({
+      service,
+      service_duration: selectedService?.duration,
+      appointment_date: date,
+      appointment_time: time,
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      measurements: hasMeasurements ? { ...measurements, unit } : null,
+      notes: notes || null,
+    })
+
+    setSubmitting(false)
+    if (error) {
+      setSubmitError('Something went wrong. Please try again.')
+      return
+    }
     setSubmitted(true)
   }
 
@@ -331,14 +355,17 @@ export default function BookingModal({ onClose }) {
               </button>
             )}
             {step === 3 && (
-              <button
-                type="submit"
-                form="booking-form"
-                className="booking-nav-btn booking-nav-btn--submit"
-                disabled={!canSubmit}
-              >
-                Confirm Booking
-              </button>
+              <>
+                {submitError && <span className="booking-submit-error">{submitError}</span>}
+                <button
+                  type="submit"
+                  form="booking-form"
+                  className="booking-nav-btn booking-nav-btn--submit"
+                  disabled={!canSubmit || submitting}
+                >
+                  {submitting ? 'Confirming…' : 'Confirm Booking'}
+                </button>
+              </>
             )}
           </div>
         </div>

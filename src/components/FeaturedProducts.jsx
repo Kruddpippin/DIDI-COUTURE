@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 import './FeaturedProducts.css'
 
-const products = [
+const FALLBACK_PRODUCTS = [
   {
     id: 'dc-kaftan-navy',
     title: '[PRE_ORDER] DIDI COUTURE Kaftan [Navy]',
@@ -69,6 +70,20 @@ const products = [
 
 function FeaturedProducts({ onAddToCart, onBuyNow }) {
   const [hoveredId, setHoveredId] = useState(null)
+  const [products, setProducts] = useState(FALLBACK_PRODUCTS)
+
+  useEffect(() => {
+    supabase
+      .from('products')
+      .select('*')
+      .eq('available', true)
+      .order('created_at')
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setProducts(data.map(p => ({ ...p, hover: p.image_hover })))
+        }
+      })
+  }, [])
 
   return (
     <section id="collections" className="featured section">
