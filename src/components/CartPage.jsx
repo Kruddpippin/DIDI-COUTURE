@@ -42,6 +42,12 @@ function CartPage({ items, initialStep = 'cart', onClose, onRemove, onUpdateQty 
     setPlacing(true)
     setOrderError(null)
 
+    if (!supabase) {
+      setPlacing(false)
+      setOrderPlaced(true)
+      return
+    }
+
     const { data: order, error: orderErr } = await supabase
       .from('orders')
       .insert({

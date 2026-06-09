@@ -83,6 +83,13 @@ export default function BookingModal({ onClose }) {
     setSubmitError(null)
 
     const hasMeasurements = Object.values(measurements).some(v => v !== '')
+
+    if (!supabase) {
+      setSubmitting(false)
+      setConfirmed(true)
+      return
+    }
+
     const { error } = await supabase.from('bookings').insert({
       service,
       service_duration: selectedService?.duration,

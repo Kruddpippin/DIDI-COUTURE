@@ -136,6 +136,7 @@ function FeaturedProducts({ onAddToCart, onBuyNow }) {
   const [products, setProducts] = useState(FALLBACK_PRODUCTS)
 
   useEffect(() => {
+    if (!supabase) return
     supabase
       .from('products')
       .select('*')
